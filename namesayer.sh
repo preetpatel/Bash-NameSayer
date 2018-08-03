@@ -20,19 +20,15 @@ mainMenuPrompt() {
     read -p "Enter a selection [l/p/d/c/q]: " SELECT
     case $SELECT in 
 		[lL] | [lL][iI][sS][tT])
-		   pwd
 		    listCreations
 	    	;;
 		[pP] | [pP][lL][aA][yY])
-		   pwd
 		    playCreation
 		    ;;
 		[dD] | [dD][eE][lL][eE][tT][eE])
-		   pwd
 		    deleteCreation
 		    ;;
 		[cC] | [cC][rR][eE][aA][tT][eE])
-		   pwd
 		    createCreation
 		    ;;
 		[qQ] | [qQ][uU][iI][tT])
