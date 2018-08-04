@@ -87,7 +87,6 @@ printListofCreations() {
     if [ $FILE_COUNT -gt 1 ]; then
 		count=1
 		files=[]
-	
 		for mkv in *.mkv; do 
 	    	echo "($count) $mkv"
 	    	files[$((count - 1))]=$mkv
@@ -107,7 +106,6 @@ printListofCreations() {
 
 listCreations() {
     clear
-    echo ""
     echo "List of all Creations:"
     printListofCreations 
     read  -n 1 -s -r -p "Press any key to go back to the Main Menu "
@@ -145,29 +143,17 @@ recordAudio() {
 	echo ""
 	ffmpeg -t 5 -f alsa -ac 2 -i hw:0 ./lib/"$1"_audio.mkv 2> /dev/null
     listenToAudio "$1"
-    confirmAudio "$1"
 }
 
 listenToAudio() {
     
 	echo ""
-	read -p "Thank you. Would you like to listen to the recording? (Y/N): " OPTION
+	read -p "Would you like to (l)isten to the recording, (k)eep it or (r)edo it? " OPTION
     case $OPTION in 
-		[yY] | [Yy][eE][sS])
+		[lL] | [lL][iI][sS][tT][eE][nN])
 		    ffplay -t 5 -autoexit ./lib/"$1"_audio.mkv 2> /dev/null
-		    ;;
-		[nN] | [nN][oO])
-		    ;;
-		*)
 		    listenToAudio "$1"
 		    ;;
-    esac
-}
-
-confirmAudio() {
-    echo ""
-    read -p "Would you like to (k)eep the recording or (r)edo it? " CHOICE
-    case $CHOICE in 
 		[rR] | [rR][eE][dD][oO])
 		    rm ./lib/"$1"_audio.mkv
 		    recordAudio "$1"
@@ -175,10 +161,11 @@ confirmAudio() {
 		[kK] | [kK][eE][eE][pP])
 		    ;;
 		*)
-		    confirmAudio "$1"
+		    listenToAudio "$1"
 		    ;;
     esac
 }
+
 
 checkStorageDirExists() {
 
