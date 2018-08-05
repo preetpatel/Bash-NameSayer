@@ -5,7 +5,7 @@ showMainMenu() {
     echo "Welcome to NameSayer"
     echo "=============================================================="
     echo ""
-    echo "Please select from one of the following options:"
+    echo "Please select from one of the following options:\n"
     echo ""
     echo "	(l)ist existing creations"
     echo "	(p)lay an existing creation"
