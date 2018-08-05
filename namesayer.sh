@@ -49,13 +49,35 @@ deleteCreation() {
 	    	showMainMenu
 	    	;;
 		*)
+			if [ "$DELETE" -eq "$DELETE" ]; then
+			if ! [ "$DELETE" == '' ]; then 	
 			if [ $DELETE -gt ${#files[@]} ]; then
 	    		deleteCreation
 			else
 				DELETE=$((DELETE - 1))
-				rm ./lib/"${files[$DELETE]}" 2> /dev/null
+				read -p "Please enter the creation name to confirm its deletion: " confirm 
+				cd ./lib/
+				confirm="${confirm}.mkv"
+				if [ "${files[$DELETE]}" == "$confirm" ]; then 
+				rm "${files[$DELETE]}" 2> /dev/null
+				echo -e "File has been deleted\n"
+				    read -n 1 -s -r -p "Press any key to return to the main menu "
+				else
+				    echo "That did no match the requested deletion file"
+				    read  -n 1 -s -r -p "Press any key to retry "
+				   cd ..
+				   deleteCreation
+
+				fi
+				cd ..
         		showMainMenu
     		fi
+		else
+		    deleteCreation
+		fi
+		else 
+		    deleteCreation
+		fi
     		;;
     esac
 }
@@ -69,13 +91,17 @@ playCreation() {
 		    showMainMenu
 		    ;;
 		*)
-			if [ $PLAY -gt ${#files[@]} ]; then
+			if [ $PLAY -eq $PLAY 2>/dev/null ]; then
+			if [ $PLAY -gt ${#files[@]} 2>/dev/null ] || [ -z "$PLAY" ]; then
 	    		playCreation
 			else
 				PLAY=$((PLAY - 1))
-				ffplay -autoexit ./lib/"${files[$PLAY]}" 2> /dev/null
+				ffplay -autoexit ./lib/"${files[$PLAY]}" &> /dev/null
         		showMainMenu
-    		fi
+			fi
+			else
+			    playCreation
+			fi
     		;;
     esac
 }
@@ -88,7 +114,7 @@ printListofCreations() {
 		count=1
 		files=[]
 		for mkv in *.mkv; do 
-	    	echo "($count) $mkv"
+	    	echo "($count) "${mkv%.*}""
 	    	files[$((count - 1))]=$mkv
 	    	count=$((count + 1))
 		done
@@ -115,32 +141,37 @@ listCreations() {
 }
 
 createCreation() {
+	
 	read -p "Give a name to your creation: " NAME
-
-	if [ -f ./lib/"$NAME".mkv ]; then	
+	if [ -z $NAME 2> /dev/null ]; then 
+	    echo "Please enter a valid input."
+	    createCreation
+	else
+	if [ -f ./lib/"$NAME.mkv" ]; then	
 	    echo "Creation with this name already exists"
 	    createCreation
 	fi
 
-    recordAudio "$NAME"
-	ffmpeg -f lavfi -i color=c=white:s=1920x1080:d=5 -vf "drawtext=fontfile=/path/to/font.ttf:fontsize=60: \
-	fontcolor=black:x=(w-text_w)/2:y=(h-text_h)/2:text='$NAME'" ./lib/"$NAME"_video.mkv 2> /dev/null
+        recordAudio "$NAME"
+	ffmpeg -f lavfi -i color=c=white:s=1920x1080:d=5 -vf "drawtext=fontsize=60: \
+	fontcolor=black:x=(w-text_w)/2:y=(h-text_h)/2:text='$NAME'" ./lib/"$NAME"_video.mkv 2>/dev/null 
 
  	ffmpeg -i ./lib/"$NAME"_video.mkv -i ./lib/"$NAME"_audio.mkv -codec copy -shortest ./lib/"$NAME".mkv 2> /dev/null
 
-	rm ./lib/"$NAME"_video.mkv
-	rm ./lib/"$NAME"_audio.mkv
+	rm ./lib/"$NAME"_video.mkv 2>/dev/null
+	rm ./lib/"$NAME"_audio.mkv 2>/dev/null
 
 	read  -n 1 -s -r -p "Creation successful. Press any key to return to the main menu. "
 	clear
 	showMainMenu
+	fi
 }
 
 recordAudio() {
     
 	echo "Please record your voice saying $1 loud and clear. You will have 5 seconds to do this."
 	read  -n 1 -s -r -p "Press any key to start recording the audio "
-	echo ""
+	echo -e "\nRecording... You have 5 seconds"
 	ffmpeg -t 5 -f alsa -ac 2 -i default ./lib/"$1"_audio.mkv 2> /dev/null
     listenToAudio "$1"
 }
@@ -151,6 +182,7 @@ listenToAudio() {
 	read -p "Would you like to (l)isten to the recording, (k)eep it or (r)edo it? " OPTION
     case $OPTION in 
 		[lL] | [lL][iI][sS][tT][eE][nN])
+		    echo "Playing sound"
 		    ffplay -t 5 -autoexit ./lib/"$1"_audio.mkv 2> /dev/null
 		    listenToAudio "$1"
 		    ;;
