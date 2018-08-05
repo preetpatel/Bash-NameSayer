@@ -141,7 +141,7 @@ recordAudio() {
 	echo "Please record your voice saying $1 loud and clear. You will have 5 seconds to do this."
 	read  -n 1 -s -r -p "Press any key to start recording the audio "
 	echo ""
-	ffmpeg -t 5 -f alsa -ac 2 -i hw:0 ./lib/"$1"_audio.mkv 2> /dev/null
+	ffmpeg -t 5 -f alsa -ac 2 -i default ./lib/"$1"_audio.mkv 2> /dev/null
     listenToAudio "$1"
 }
 
