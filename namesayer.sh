@@ -183,7 +183,7 @@ listenToAudio() {
     case $OPTION in 
 		[lL] | [lL][iI][sS][tT][eE][nN])
 		    echo "Playing sound"
-		    ffplay -t 5 -autoexit ./lib/"$1"_audio.mkv 2> /dev/null
+		    ffplay -nodisp -t 5 -autoexit ./lib/"$1"_audio.mkv 2> /dev/null
 		    listenToAudio "$1"
 		    ;;
 		[rR] | [rR][eE][dD][oO])
