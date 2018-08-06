@@ -3,10 +3,8 @@ showMainMenu() {
     clear
     echo "=============================================================="
     echo "Welcome to NameSayer"
-    echo "=============================================================="
-    echo ""
-    echo "Please select from one of the following options:\n"
-    echo ""
+    echo -e "=============================================================="
+    echo -e "Please select from one of the following options:\n"
     echo "	(l)ist existing creations"
     echo "	(p)lay an existing creation"
     echo "	(d)elete an existing creation"
@@ -90,7 +88,7 @@ playCreation() {
         ;;
         *)
             if [ $play -eq $play 2>/dev/null ]; then
-                if [ $play -gt ${#files[@]} 2>/dev/null ] || [ -z "$play" ]; then
+                if [ $play -gt ${#files[@]} 2>/dev/null ] || [ -z "$play" ] || [ "$play" -eq '0' ]; then
                     playCreation
                 else
                     play=$((play - 1))
@@ -145,7 +143,7 @@ createCreation() {
         echo "Please enter a valid input."
         createCreation
     else
-        if [ -f ./lib/"$name.mkv" ]; then
+        if [ -f ./lib/"$name".mkv ]; then
             echo "Creation with this name already exists"
             createCreation
         fi
